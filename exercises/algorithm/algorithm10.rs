@@ -1,6 +1,6 @@
 /*
-	graph
-	This problem requires you to implement a basic graph functio
+    graph
+    This problem requires you to implement a basic graph functio
 */
 // I AM NOT DONE
 
@@ -30,6 +30,32 @@ impl Graph for UndirectedGraph {
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+
+        let from_node = edge.0.to_string();
+        let to_node = edge.1.to_string();
+        let value = edge.2;
+
+        match self.adjacency_table_mutable().get_mut(&from_node) {
+            Some(v) => v.push((to_node.clone(), value.clone())),
+            None => {
+                self.add_node(edge.0);
+                self.adjacency_table_mutable()
+                    .get_mut(&from_node)
+                    .unwrap()
+                    .push((to_node.clone(), value.clone()));
+            }
+        }
+
+        match self.adjacency_table_mutable().get_mut(&to_node) {
+            Some(v) => v.push((from_node, value)),
+            None => {
+                self.add_node(edge.1);
+                self.adjacency_table_mutable()
+                    .get_mut(&to_node)
+                    .unwrap()
+                    .push((from_node, value));
+            }
+        }
     }
 }
 pub trait Graph {
@@ -38,10 +64,28 @@ pub trait Graph {
     fn adjacency_table(&self) -> &HashMap<String, Vec<(String, i32)>>;
     fn add_node(&mut self, node: &str) -> bool {
         //TODO
-		true
+
+        self.adjacency_table_mutable()
+            .insert(node.to_string(), vec![])
+            .is_none()
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+
+        let from_node = edge.0.to_string();
+        let to_node = edge.1.to_string();
+        let value = edge.2;
+
+        match self.adjacency_table_mutable().get_mut(&from_node) {
+            Some(v) => v.push((to_node, value)),
+            None => {
+                self.add_node(edge.0);
+                self.adjacency_table_mutable()
+                    .get_mut(&from_node)
+                    .unwrap()
+                    .push((to_node, value));
+            }
+        }
     }
     fn contains(&self, node: &str) -> bool {
         self.adjacency_table().get(node).is_some()

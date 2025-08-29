@@ -1,12 +1,13 @@
 /*
-	heap
-	This question requires you to implement a binary heap function
+    heap
+    This question requires you to implement a binary heap function
 */
 // I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
 
+#[derive(Debug)]
 pub struct Heap<T>
 where
     T: Default,
@@ -38,6 +39,28 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+
+        self.count += 1;
+
+        let mut idx = self.items.len() - 1;
+
+        while self.parent_idx(idx) != 0
+            && (self.comparator)(&self.items[idx], &self.items[self.parent_idx(idx)])
+        {
+            // swap
+            let parent = self.parent_idx(idx);
+            let (a, b) = if idx > parent {
+                let (left, right) = self.items.split_at_mut(idx.max(parent));
+                (&mut right[0], &mut left[parent])
+            } else {
+                let (left, right) = self.items.split_at_mut(parent);
+                (&mut left[idx], &mut right[0])
+            };
+
+            std::mem::swap(a, b);
+            idx = self.parent_idx(idx);
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +81,7 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+        0
     }
 }
 
@@ -85,10 +108,16 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+
+        if !self.is_empty() {
+            Some(self.items.remove(1)) // reserve for the default value
+        } else {
+            None
+        }
     }
 }
 
+#[derive(Debug)]
 pub struct MinHeap;
 
 impl MinHeap {
@@ -129,6 +158,9 @@ mod tests {
         heap.add(2);
         heap.add(9);
         heap.add(11);
+
+        println!("{:?}", heap);
+
         assert_eq!(heap.len(), 4);
         assert_eq!(heap.next(), Some(2));
         assert_eq!(heap.next(), Some(4));

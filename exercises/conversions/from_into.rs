@@ -7,6 +7,8 @@
 // Execute `rustlings hint from_into` or use the `hint` watch subcommand for a
 // hint.
 
+use std::vec;
+
 #[derive(Debug)]
 struct Person {
     name: String,
@@ -44,6 +46,32 @@ impl Default for Person {
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        if s.len() == 0 {
+            return Person::default();
+        }
+
+        let vec = s.split(",").collect::<Vec<_>>();
+
+        if vec.len() != 2 {
+            return Person::default();
+        }
+
+        let name = vec[0];
+        let age = vec[1];
+
+        if name.len() == 0 {
+            return Person::default();
+        }
+
+        let age_num = age.parse::<usize>();
+
+        match age_num {
+            Ok(n) => Person {
+                name: name.to_string(),
+                age: n,
+            },
+            Err(_) => Person::default(),
+        }
     }
 }
 
